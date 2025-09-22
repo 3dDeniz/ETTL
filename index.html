@@ -1,36 +1,51 @@
-<h1>🏆 Elo Leaderboard</h1>
-<table id="leaderboard">
-  <thead>
-    <tr>
-      <th>Rank</th>
-      <th>Player</th>
-      <th>Elo</th>
-      <th>Total Games</th>
-      <th>Win %</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Elo Leaderboard</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; background: #f9f9f9; }
+    table { border-collapse: collapse; width: 100%; margin-bottom: 30px; background: #fff; }
+    th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+    th { background-color: #eee; }
+    h1 { margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+  <h1>🏆 Elo Leaderboard</h1>
+  <table id="leaderboard">
+    <thead>
+      <tr>
+        <th>Rank</th>
+        <th>Player</th>
+        <th>Elo</th>
+        <th>Total Games</th>
+        <th>Win %</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 
-<script>
-  const API_URL = 'https://script.google.com/macros/s/AKfycbw13dnuTCR9AuwZAnmLhBSiu55dSu2I65B211okIsZuGpmiEA7EVq-aQYPlDvmGUs_w/exec'; // Replace with your actual URL
+  <script>
+    const API_URL = 'https://script.google.com/macros/s/AKfycbw13dnuTCR9AuwZAnmLhBSiu55dSu2I65B211okIsZuGpmiEA7EVq-aQYPlDvmGUs_w/exec'; // Replace with your actual Web App URL
 
-  fetch(API_URL)
-    .then(res => res.json())
-    .then(data => {
-      // Sort by Elo descending
-      data.sort((a, b) => b.elo - a.elo);
+    fetch(API_URL)
+      .then(res => res.json())
+      .then(data => {
+        // Sort by Elo descending
+        data.sort((a, b) => b.elo - a.elo);
 
-      const tbody = document.querySelector('#leaderboard tbody');
-      data.forEach((player, i) => {
-        const winPercent = player.games > 0 ? Math.round(player.winrate * 100) + '%' : '—';
-        tbody.innerHTML += `<tr>
-          <td>${i + 1}</td>
-          <td>${player.player}</td>
-          <td>${player.elo}</td>
-          <td>${player.games}</td>
-          <td>${winPercent}</td>
-        </tr>`;
+        const tbody = document.querySelector('#leaderboard tbody');
+        data.forEach((player, i) => {
+          const winPercent = player.games > 0 ? Math.round(player.winrate * 100) + '%' : '—';
+          tbody.innerHTML += `<tr>
+            <td>${i + 1}</td>
+            <td>${player.player}</td>
+            <td>${player.elo}</td>
+            <td>${player.games}</td>
+            <td>${winPercent}</td>
+          </tr>`;
+        });
       });
-    });
-</script>
+  </script>
+</body>
+</html>
