@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Elo Leaderboard</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    table { border-collapse: collapse; width: 100%; margin-bottom: 30px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    .card { border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; }
+    canvas { max-width: 100%; }
+  </style>
+</head>
+<body>
+  <h1>🏆 Elo Leaderboard</h1>
+  <table id="leaderboard">
+    <thead><tr><th>Rank</th><th>Player</th><th>Elo</th><th>Winrate</th></tr></thead>
+    <tbody></tbody>
+  </table>
+
+  <h2>📈 Player Cards</h2>
+  <div id="playerCards"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const API_URL = 'https://script.google.com/macros/s/AKfycbx.../exec';
+
+    fetch(API_URL)
+      .then(res => res.json())
+      .then(data => {
+        // Sort by Elo descending
+        data.sort((a, b) => b['Current Rating'] - a['Current Rating']);
+
+        // Leaderboard table
+        const tbody = document.querySelector('#leaderboard tbody');
+        data.forEach((player, i) => {
+          const winrate = player['Total Games'] > 0 ? Math.round((player['Total Wins'] / player['Total Games']) * 100) + '%' : '—';
+          tbody.innerHTML += `<tr>
+            <td>${i + 1}</td>
+            <td>${player['Player Name']}</td>
+            <td>${player['Current Rating']}</td>
+            <td>${winrate}</td>
+          </tr>`;
+        });
+
+        // Player cards
+        const container = document.getElementById('playerCards');
+        data.forEach(player => {
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <h3>${player['Player Name']}</h3>
+            <p><strong>Elo:</strong> ${player['Current Rating']}</p>
+            <p><strong>Winrate:</strong> ${player['Total Games'] > 0 ? Math.round((player['Total Wins'] / player['Total Games']) * 100) + '%' : '—'}</p>
+            <canvas id="chart-${player['Player Name']}"></canvas>
+            <p><strong>Match History:</strong></p>
+            <table>
+              <thead><tr><th>Opponent</th><th>Result</th><th>Date</th></tr></thead>
+              <tbody id="history-${player['Player Name']}"></tbody>
+            </table>
+          `;
+          container.appendChild(card);
+
+          // Dummy Elo chart (replace with real data if available)
+          new Chart(document.getElementById(`chart-${player['Player Name']}`), {
+            type: 'line',
+            data: {
+              labels: ['Match 1', 'Match 2', 'Match 3'],
+              datasets: [{
+                label: 'Elo',
+                data: [1000, 1016, 1032],
+                borderColor: 'blue',
+                fill: false
+              }]
+            }
+          });
+
+          // Dummy match history (replace with real data if available)
+          const history = document.getElementById(`history-${player['Player Name']}`);
+          history.innerHTML = `
+            <tr><td>Bob</td><td>Win</td><td>2025-09-21</td></tr>
+            <tr><td>Alice</td><td>Loss</td><td>2025-09-20</td></tr>
+          `;
+        });
+      });
+  </script>
+</body>
+</html>
